@@ -97,8 +97,8 @@ const StitchDiagram = ({ type }) => {
       <path d="M80 60 L90 30 L130 30 L140 60 L130 90 L90 90 Z" fill={OLIVE} opacity="0.25" stroke={OLIVE_DARK} strokeWidth="1.5" />
       <text x="110" y="55" textAnchor="middle" fontSize="9" fill={OLIVE_DARK}>thumb</text>
       <text x="110" y="67" textAnchor="middle" fontSize="9" fill={OLIVE_DARK}>gusset</text>
-      <text x="75" y="35" textAnchor="middle" fontSize="8" fill={WARM}>M1</text>
-      <text x="145" y="35" textAnchor="middle" fontSize="8" fill={WARM}>M1</text>
+      <text x="75" y="35" textAnchor="middle" fontSize="8" fill={WARM}>M1L</text>
+      <text x="145" y="35" textAnchor="middle" fontSize="8" fill={WARM}>M1R</text>
     </svg>
   );
   if (type === "thumbsep") return (
@@ -222,7 +222,7 @@ const steps = [
     content: null,
     instructions: null,
     gussetRounds: true,
-    note: "M1 = pick up the bar between stitches, knit through the back loop. Check off each round as you go!"
+    note: "M1L = pick up the bar from front to back, knit through the back loop (leans left). M1R = pick up the bar from back to front, knit through the front loop (leans right). This creates neat, mirrored increases. Check off each round as you go!"
   },
   {
     id: 4,
@@ -276,17 +276,17 @@ const steps = [
 ];
 
 const gussetRounds = [
-  { rnd: 1, inst: "K22. Place marker. M1, K1, M1. Place marker. Knit to end.", between: 3, total: 46 },
+  { rnd: 1, inst: "K22. Place marker. M1L, K1, M1R. Place marker. Knit to end.", between: 3, total: 46 },
   { rnd: 2, inst: "Knit all stitches (slip markers).", between: 3, total: 46 },
-  { rnd: 3, inst: "Knit to marker, slip, M1, knit to marker, M1, slip, knit to end.", between: 5, total: 48 },
+  { rnd: 3, inst: "Knit to marker, slip, M1L, knit to marker, M1R, slip, knit to end.", between: 5, total: 48 },
   { rnd: 4, inst: "Knit all stitches.", between: 5, total: 48 },
-  { rnd: 5, inst: "Knit to marker, slip, M1, knit to marker, M1, slip, knit to end.", between: 7, total: 50 },
+  { rnd: 5, inst: "Knit to marker, slip, M1L, knit to marker, M1R, slip, knit to end.", between: 7, total: 50 },
   { rnd: 6, inst: "Knit all stitches.", between: 7, total: 50 },
-  { rnd: 7, inst: "Knit to marker, slip, M1, knit to marker, M1, slip, knit to end.", between: 9, total: 52 },
+  { rnd: 7, inst: "Knit to marker, slip, M1L, knit to marker, M1R, slip, knit to end.", between: 9, total: 52 },
   { rnd: 8, inst: "Knit all stitches.", between: 9, total: 52 },
-  { rnd: 9, inst: "Knit to marker, slip, M1, knit to marker, M1, slip, knit to end.", between: 11, total: 54 },
+  { rnd: 9, inst: "Knit to marker, slip, M1L, knit to marker, M1R, slip, knit to end.", between: 11, total: 54 },
   { rnd: 10, inst: "Knit all stitches.", between: 11, total: 54 },
-  { rnd: 11, inst: "Knit to marker, slip, M1, knit to marker, M1, slip, knit to end.", between: 13, total: 56 },
+  { rnd: 11, inst: "Knit to marker, slip, M1L, knit to marker, M1R, slip, knit to end.", between: 13, total: 56 },
   { rnd: 12, inst: "Knit all stitches.", between: 13, total: 56 },
 ];
 
