@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import RowCounter from "../RowCounter.jsx";
 
@@ -290,11 +290,26 @@ const gussetRounds = [
   { rnd: 12, inst: "Knit all stitches.", between: 13, total: 56 },
 ];
 
+const loadJson = (key, fallback) => {
+  try {
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : fallback;
+  } catch { return fallback; }
+};
+
+const saveJson = (key, value) => {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+};
+
 export default function Gloves() {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [checkedInstr, setCheckedInstr] = useState({});
-  const [checkedGusset, setCheckedGusset] = useState({});
+  const [currentStep, setCurrentStep] = useState(() => loadJson("gloves_currentStep", 0));
+  const [checkedInstr, setCheckedInstr] = useState(() => loadJson("gloves_checkedInstr", {}));
+  const [checkedGusset, setCheckedGusset] = useState(() => loadJson("gloves_checkedGusset", {}));
   const step = steps[currentStep];
+
+  useEffect(() => { saveJson("gloves_currentStep", currentStep); }, [currentStep]);
+  useEffect(() => { saveJson("gloves_checkedInstr", checkedInstr); }, [checkedInstr]);
+  useEffect(() => { saveJson("gloves_checkedGusset", checkedGusset); }, [checkedGusset]);
 
   const toggleInstr = (stepId, idx) => {
     const key = `${stepId}-${idx}`;
