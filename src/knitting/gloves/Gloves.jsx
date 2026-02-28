@@ -65,7 +65,7 @@ const StitchDiagram = ({ type }) => {
           <path d={`M${12 + i * 18} 50 Q${20 + i * 18} 35 ${28 + i * 18} 50`} stroke={OLIVE} fill="none" strokeWidth="2.5" />
         </g>
       ))}
-      <text x="100" y="75" textAnchor="middle" fontSize="10" fill={WARM_LIGHT}>44 stitches on needles</text>
+      <text x="100" y="75" textAnchor="middle" fontSize="10" fill={WARM_LIGHT}>45 cast on · 44 after join</text>
     </svg>
   );
   if (type === "ribbing") return (
@@ -76,7 +76,7 @@ const StitchDiagram = ({ type }) => {
           <text x={23 + i * 24} y="85" textAnchor="middle" fontSize="8" fill={WARM}>{i % 2 === 0 ? "K" : "P"}</text>
         </g>
       ))}
-      <text x="110" y="98" textAnchor="middle" fontSize="10" fill={WARM_LIGHT}>k1, p1 repeat · long cuff</text>
+      <text x="110" y="98" textAnchor="middle" fontSize="10" fill={WARM_LIGHT}>k1, p1 repeat · 25 rounds</text>
     </svg>
   );
   if (type === "stockinette") return (
@@ -181,7 +181,7 @@ const steps = [
       { label: "Needles", value: "US 4 (3.5mm) \u2014 magic loop" },
       { label: "Yarn", value: "Sport weight, olive green, ~30g/pair" },
       { label: "Notions", value: "3 stitch markers, tapestry needle, scrap yarn" },
-      { label: "Stitches", value: "44 cast on \u00b7 22 per needle" },
+      { label: "Stitches", value: "45 cast on \u00b7 44 after join \u00b7 22 per needle" },
     ],
     instructions: null,
     note: "3 markers: 1 for start of round, 2 for thumb gusset. Keep scrap yarn handy for holding thumb stitches later."
@@ -193,14 +193,14 @@ const steps = [
     diagram: "ribbing",
     content: null,
     instructions: [
-      "Cast on 44 stitches.",
+      "Cast on 45 stitches.",
       "Join in the round \u2014 don\u2019t twist!",
+      "Decrease 1 stitch as you join (k2tog) \u2014 now 44 stitches.",
       "Place start-of-round marker.",
       "Work 1x1 rib: *k1, p1* around.",
-      "Repeat for 30\u201336 rounds for a long, cozy cuff.",
-      "The cuff should be about half the total glove length.",
+      "Repeat for 25 rounds of ribbing.",
     ],
-    note: "Your cuff is long and squishy \u2014 it can scrunch up at the wrist. Try it on as you go to check the length you like!"
+    note: "Cast on 45, then decrease 1 when joining to get an even 44. This avoids a gap at the join. 25 rounds of ribbing gives a nice snug cuff!"
   },
   {
     id: 2,
@@ -348,7 +348,7 @@ export default function Gloves() {
           <h1 style={{ margin: 0, fontSize: "20px", color: OLIVE_DARK, fontWeight: 600, letterSpacing: "0.5px" }}>Gentle Fingerless Gloves</h1>
           <YarnBall size={34} />
         </div>
-        <p style={{ margin: 0, fontSize: "12px", color: WARM_LIGHT }}>in the round · magic loop · 44 sts · long cuff · longer thumb</p>
+        <p style={{ margin: 0, fontSize: "12px", color: WARM_LIGHT }}>in the round · magic loop · 45 cast on · 44 sts · 25 rounds ribbing</p>
       </div>
 
       {/* Step Navigation Pills */}

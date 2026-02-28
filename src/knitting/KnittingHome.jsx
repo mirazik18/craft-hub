@@ -12,7 +12,7 @@ const patterns = [
     title: "Gentle Fingerless Gloves",
     emoji: "🧤",
     description:
-      "In the round · magic loop · 44 sts · long cuff · longer thumb",
+      "In the round · magic loop · 45 cast on · 44 sts · 25 rounds ribbing",
     difficulty: "Beginner+",
   },
   // Add more knitting patterns here:
