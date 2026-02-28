@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 const OLIVE = "#9B9B3C";
 const OLIVE_LIGHT = "#D4D4A0";
@@ -10,14 +10,13 @@ const WARM = "#6B5E50";
 const WARM_LIGHT = "#A89888";
 
 /**
- * Persistent row counter widget.
+ * Persistent, draggable row counter widget.
  * Each project gets its own localStorage key: `rowCounter_${projectKey}`
- *
- * @param {string} projectKey - unique key like "gloves", "beanie", etc.
- * @param {number} max - maximum row count (default 999)
+ * Position is also persisted per project: `rowCounterPos_${projectKey}`
  */
 export default function RowCounter({ projectKey, max = 999 }) {
   const storageKey = `rowCounter_${projectKey}`;
+  const posKey = `rowCounterPos_${projectKey}`;
 
   const [count, setCount] = useState(() => {
     try {
@@ -31,13 +30,66 @@ export default function RowCounter({ projectKey, max = 999 }) {
 
   const [minimized, setMinimized] = useState(false);
 
+  const [pos, setPos] = useState(() => {
+    try {
+      const saved = localStorage.getItem(posKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (typeof parsed.x === "number" && typeof parsed.y === "number") {
+          return parsed;
+        }
+      }
+    } catch {}
+    return { x: window.innerWidth - 180, y: window.innerHeight - 300 };
+  });
+
+  const dragging = useRef(false);
+  const dragOffset = useRef({ x: 0, y: 0 });
+  const hasMoved = useRef(false);
+  const containerRef = useRef(null);
+
   useEffect(() => {
     try {
       localStorage.setItem(storageKey, String(count));
-    } catch {
-      // storage full or unavailable — no-op
-    }
+    } catch {}
   }, [count, storageKey]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(posKey, JSON.stringify(pos));
+    } catch {}
+  }, [pos, posKey]);
+
+  const clampPos = useCallback((x, y) => {
+    const w = minimized ? 48 : 160;
+    const h = minimized ? 48 : 240;
+    return {
+      x: Math.max(0, Math.min(x, window.innerWidth - w)),
+      y: Math.max(0, Math.min(y, window.innerHeight - h)),
+    };
+  }, [minimized]);
+
+  const handlePointerDown = useCallback((e) => {
+    // don't drag from buttons
+    if (e.target.closest("button")) return;
+    dragging.current = true;
+    hasMoved.current = false;
+    const rect = containerRef.current.getBoundingClientRect();
+    dragOffset.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  }, []);
+
+  const handlePointerMove = useCallback((e) => {
+    if (!dragging.current) return;
+    hasMoved.current = true;
+    const x = e.clientX - dragOffset.current.x;
+    const y = e.clientY - dragOffset.current.y;
+    setPos(clampPos(x, y));
+  }, [clampPos]);
+
+  const handlePointerUp = useCallback(() => {
+    dragging.current = false;
+  }, []);
 
   const increment = useCallback(() => {
     setCount((c) => Math.min(c + 1, max));
@@ -54,11 +106,17 @@ export default function RowCounter({ projectKey, max = 999 }) {
   if (minimized) {
     return (
       <div
-        onClick={() => setMinimized(false)}
+        ref={containerRef}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onClick={() => {
+          if (!hasMoved.current) setMinimized(false);
+        }}
         style={{
           position: "fixed",
-          bottom: "20px",
-          right: "20px",
+          left: `${pos.x}px`,
+          top: `${pos.y}px`,
           zIndex: 1000,
           background: OLIVE,
           color: "white",
@@ -68,14 +126,14 @@ export default function RowCounter({ projectKey, max = 999 }) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          cursor: "pointer",
+          cursor: "grab",
           boxShadow: "0 3px 12px rgba(0,0,0,0.2)",
           fontSize: "14px",
           fontWeight: 700,
-          transition: "transform 0.2s",
+          userSelect: "none",
+          touchAction: "none",
+          transition: dragging.current ? "none" : "box-shadow 0.2s",
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
-        onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
         title="Open row counter"
       >
         {count}
@@ -85,10 +143,14 @@ export default function RowCounter({ projectKey, max = 999 }) {
 
   return (
     <div
+      ref={containerRef}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
       style={{
         position: "fixed",
-        bottom: "20px",
-        right: "20px",
+        left: `${pos.x}px`,
+        top: `${pos.y}px`,
         zIndex: 1000,
         background: "white",
         borderRadius: "18px",
@@ -97,9 +159,11 @@ export default function RowCounter({ projectKey, max = 999 }) {
         width: "160px",
         overflow: "hidden",
         fontFamily: "'Segoe UI', system-ui, sans-serif",
+        userSelect: "none",
+        touchAction: "none",
       }}
     >
-      {/* Title bar */}
+      {/* Title bar — drag handle */}
       <div
         style={{
           background: `linear-gradient(135deg, ${OLIVE_PALE}, white)`,
@@ -108,6 +172,7 @@ export default function RowCounter({ projectKey, max = 999 }) {
           alignItems: "center",
           justifyContent: "space-between",
           borderBottom: `1px solid ${OLIVE_PALE}`,
+          cursor: "grab",
         }}
       >
         <span
@@ -116,8 +181,12 @@ export default function RowCounter({ projectKey, max = 999 }) {
             fontWeight: 600,
             color: OLIVE_DARK,
             letterSpacing: "0.3px",
+            display: "flex",
+            alignItems: "center",
+            gap: "4px",
           }}
         >
+          <span style={{ color: WARM_LIGHT, fontSize: "10px", letterSpacing: "1px" }}>⠿</span>
           🧶 Row Counter
         </span>
         <button
